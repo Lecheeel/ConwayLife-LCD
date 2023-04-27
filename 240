@@ -1,0 +1,73 @@
+#include <Arduino.h>
+#include <TFT_eSPI.h>
+#include <SPI.h>
+#define SCREENWIDTH 240
+#define SCREENHEIGHT 240
+#define TFT_GREY 0x0FD0
+#define TFT_BL 13
+#define TFT_DC 23
+
+byte inc = 0;
+uint32_t updateTime = 0; // time for next update
+unsigned int col = 0;
+int oldi = 0;
+int i = 0;
+
+TFT_eSPI tft = TFT_eSPI();
+
+void setup(void)
+{
+  Serial.begin(115200);
+
+  sigmaDeltaSetup(0, 312500);     // channel 0 频率为 312500 Hz
+  sigmaDeltaAttachPin(TFT_BL, 0); //附加到 channel 0
+  sigmaDeltaWrite(0, 100);
+
+  tft.init();
+
+  tft.fillScreen(TFT_WHITE);
+  tft.setTextColor(TFT_BLACK, TFT_WHITE);
+  tft.setCursor(5, 30, 4);
+
+  tft.println("Hello World!");
+
+  tft.setTextColor(TFT_RED, TFT_WHITE);
+  tft.setTextFont(2);
+
+  tft.println("Groop");
+  tft.println("I implore thee,");
+
+  // updateTime = millis(); // Next update time
+  // tft.fillRect(0, 0, 50, 50, TFT_RED);
+}
+
+void loop()
+{
+  for (int val = 0; val < 255; val++)
+  {
+    sigmaDeltaWrite(0, val);
+    delay(50);
+  }
+  for (int val = 255; val > 0; val--)
+  {
+    sigmaDeltaWrite(0, val);
+    delay(50);
+  }
+  // fillSegment(65, 120, 0, 60, 50, TFT_RED);
+  /*
+  if (updateTime <= millis())
+  {
+    updateTime = millis() + 30; //每30ms更新一次
+    if (i < 350)
+      i += 5;
+    else
+      oldi = i = -50;
+    while (i != oldi)
+    {
+      tft.drawFastHLine(0, oldi, 50, TFT_BLACK);
+      oldi++;
+      tft.drawFastHLine(0, oldi + 50, 50, TFT_RED);
+    }
+  }
+  */
+}
